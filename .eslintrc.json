@@ -1,3 +1,46 @@
 {
-  "extends": "next/core-web-vitals"
+  "extends": [
+    "next/core-web-vitals",
+    "airbnb",
+    "airbnb-typescript"
+  ],
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
+  "rules": {
+    "react/function-component-definition": "off",
+    "import/prefer-default-export": "off",
+    "@typescript-eslint/naming-convention": "off",
+    "react/require-default-props": "off",
+    "no-param-reassign": "off",
+    "react/no-unstable-nested-components": "off",
+    "react/react-in-jsx-scope": "off",
+    "import/extensions": "off",
+    "react/jsx-props-no-spreading": "off",
+    "import/order": [
+      "error",
+      {
+        "pathGroups": [
+          { "pattern": "react", "group": "builtin" },
+          { "pattern": "vite", "group": "builtin" },
+          { "pattern": "~shared/**", "group": "internal" },
+          { "pattern": "~entities/**", "group": "internal" },
+          { "pattern": "~features/**", "group": "internal" },
+          { "pattern": "~widgets/**", "group": "internal" },
+          { "pattern": "~pages/**", "group": "internal" }
+        ],
+        "pathGroupsExcludedImportTypes": ["builtin"],
+        "groups": [
+          "builtin",
+          "external",
+          "internal",
+          "parent",
+          "sibling",
+          "index"
+        ],
+        "newlines-between": "never",
+        "alphabetize": { "order": "asc", "caseInsensitive": true }
+      }
+    ]
+  }
 }

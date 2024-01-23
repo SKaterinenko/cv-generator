@@ -2,7 +2,7 @@
 
 import React from 'react';
 import {
-  Page, Text, View, Document, StyleSheet, Font,
+  Page, Text, View, Document, Image, StyleSheet, Font,
 } from '@react-pdf/renderer';
 import { Input } from '@/shared/Input';
 
@@ -15,35 +15,42 @@ Font.register({
 // Create styles
 const styles = StyleSheet.create({
   page: {
-    flexDirection: 'row',
     backgroundColor: '#ffffff',
     fontFamily: 'Roboto',
   },
   body: {
-    paddingTop: 35,
-    paddingBottom: 65,
-    paddingHorizontal: 35,
+    padding: 35,
   },
   section: {
     maxHeight: 100,
-    padding: 20,
     width: '100%',
+    display: 'flex',
+    flexDirection: 'row',
     backgroundColor: '#4d4dfd',
   },
-  title: {
-    marginLeft: 5,
+  titleText: {
     fontSize: 17,
+    color: '#ffffff',
+  },
+  header: {
+    padding: 20,
+  },
+  jobText: {
+    fontSize: 15,
     color: '#ffffff',
   },
   flex: {
     display: 'flex',
     flexDirection: 'row',
+    gap: 5,
   },
-  subtitle: {
-    marginTop: 20,
-    marginLeft: 5,
-    fontSize: 13,
+  subtitleText: {
+    fontSize: 10,
     color: '#ffffff',
+  },
+  image: { width: 100, height: 100 },
+  leftCol: {
+
   },
 });
 
@@ -53,31 +60,60 @@ type MainProps = {
     lastName: string
     mail: string
     phone: string
+    image: string
+    job: string
+    about: string
   }
 };
 
-export const Resume:React.FC<MainProps> = ({ data }) => {
-  console.log(data);
-  return (
-    <Document>
-      <Page size="A4" style={styles.page}>
-        <Input />
-        <View style={styles.section}>
+export const Resume:React.FC<MainProps> = ({ data }) => (
+  <Document>
+    <Page size="A4" style={styles.page}>
+      <Input />
+      <View style={styles.section}>
+        {data?.image
+              && (
+              <Image
+                style={styles.image}
+                src={data.image}
+              />
+              )}
+        <View style={styles.header}>
           <View style={styles.flex}>
-            <Text style={styles.title}>{`${data.name || 'Имя'}`}</Text>
-            <Text style={styles.title}>{`${data.lastName || 'Фамилия'}`}</Text>
+            <Text style={styles.titleText}>{`${data.name || 'Имя'}`}</Text>
+            <Text style={styles.titleText}>{`${data.lastName || 'Фамилия'}`}</Text>
           </View>
+          <Text style={styles.jobText}>{data.job}</Text>
           <View style={styles.flex}>
-            <Text style={styles.subtitle}>
+            <Text style={styles.subtitleText}>
               {data.mail}
             </Text>
-            <Text style={styles.subtitle}>
+            <Text style={styles.subtitleText}>
               {data.phone}
             </Text>
           </View>
+        </View>
+      </View>
+      <View style={[styles.body, styles.flex]}>
+        <View style={styles.leftCol}>
+          {data.about
+            && (
+            <>
+              <Text style={[styles.titleText, { color: 'black' }]}>О себе</Text>
+              <Text style={[styles.subtitleText, { color: 'black' }]}>
+                {data.about}
+              </Text>
+            </>
+            )}
 
         </View>
-      </Page>
-    </Document>
-  );
-};
+        <View>
+          <Text style={styles.subtitleText}>
+            {data.phone}
+          </Text>
+        </View>
+
+      </View>
+    </Page>
+  </Document>
+);

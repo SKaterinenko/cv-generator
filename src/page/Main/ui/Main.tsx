@@ -73,7 +73,7 @@ export const Main = () => {
   }, []);
 
   return (
-    <div className="container grid grid-cols-2 mt-10 gap-10">
+    <div className="container grid grid-cols-2 mt-10 gap-10 h-screen">
       <div>
         <div className="flex justify-between items-center">
           <h1 className="my-5 text-2xl">CV Generator</h1>

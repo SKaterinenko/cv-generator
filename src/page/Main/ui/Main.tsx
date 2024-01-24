@@ -1,9 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { PDFDownloadLink, PDFViewer } from '@react-pdf/renderer';
-import { Input } from '@/shared/Input';
-import { Textarea } from '@/shared/Textarea';
+import { CardJob } from '@/entities/CardJob';
+import { Form } from '@/entities/form';
+import { Button } from '@/shared/Button';
+import { JobType, ResumeType } from '@/shared/Types/generalTypes';
 import { Resume } from '@/widgets/Resume/ui/Resume';
 
 export const Main = () => {
@@ -15,12 +17,19 @@ export const Main = () => {
     job: '',
     image: '',
     about: '',
-    jobs: '',
+    jobs: [
+      {
+        titleJob: '',
+        cityJob: '',
+        descriptionJob: '',
+      },
+    ],
   };
 
-  const [state, setState] = useState(initialState);
+  const [state, setState] = React.useState<ResumeType>(initialState);
   const [isAddedJob, setIsAddedJob] = useState(false);
-  const [job, setJob] = useState();
+  const [job, setJob] = React.useState<JobType>();
+  const [isClient, setIsClient] = useState(false);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     // Сохранит в стейт либо фото либо текст
@@ -43,76 +52,50 @@ export const Main = () => {
     }
   };
 
-  const handleChangeJob = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setJob((prevState) => ({
-      ...prevState,
+  const handleChangeJob = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setJob({
+      ...job,
       [event.target.name]: event.target.value,
-    }));
+    });
   };
 
   const saveJob = () => {
-    setState((prevState) => ({
-      ...prevState,
-      jobs: [{ ...job }],
-    }));
+    setState({
+      ...state,
+      jobs: [...state.jobs, { ...job }],
+    });
+    setJob(undefined);
     setIsAddedJob(false);
   };
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   return (
     <div className="container grid grid-cols-2 mt-10 gap-10">
       <div>
-        <h1 className="my-5 text-2xl">CV Generator</h1>
-        <button onClick={() => console.log(state)}>LOG</button>
-        <br />
-        <button onClick={() => console.log(job)}>LOG job</button>
-
-        <div className="grid grid-cols-2 gap-5">
-          <div>
-            <p>Имя:</p>
-            <Input name="name" value={state.name} onChange={handleChange} />
-          </div>
-          <div>
-            <p>Фамилия:</p>
-            <Input name="lastName" value={state.lastName} onChange={handleChange} />
-          </div>
-          <div>
-            <p>Фото:</p>
-            <input name="image" type="file" onChange={handleChange} />
-          </div>
-          <div>
-            <p>Почта:</p>
-            <Input name="mail" value={state.mail} onChange={handleChange} />
-          </div>
-          <div>
-            <p>Телефон:</p>
-            <Input name="phone" value={state.phone} onChange={handleChange} />
-          </div>
-          <div>
-            <p>Должность:</p>
-            <Input name="job" value={state.job} onChange={handleChange} />
-          </div>
-        </div>
-        <div className="mt-5">
-          <p>О себе:</p>
-          <Textarea name="about" onChange={handleChange} />
-          {isAddedJob && (
-          <div>
-            <div>
-              <p>Должность:</p>
-              <Input name="titleJob" onChange={handleChangeJob} />
-            </div>
-            <button onClick={saveJob}>Сохранить</button>
-          </div>
+        <div className="flex justify-between items-center">
+          <h1 className="my-5 text-2xl">CV Generator</h1>
+          {isClient && (
+          <PDFDownloadLink document={<Resume data={state} />} fileName="Resume.pdf">
+            <Button>Скачать резюме</Button>
+          </PDFDownloadLink>
           )}
-          {!isAddedJob && <button onClick={() => setIsAddedJob(true)}>Добавить работу</button>}
         </div>
-        <PDFDownloadLink document={<Resume data={state} />} fileName="Resume.pdf">
-          {({ loading }) => (loading ? 'Loading document...' : 'Download now!')}
-        </PDFDownloadLink>
+        <Form state={state} handleChange={handleChange} />
+        <div className="mt-5">
+          {isAddedJob && (
+          <CardJob handleChangeJob={handleChangeJob} saveJob={saveJob} />
+          )}
+          {!isAddedJob && <Button onClick={() => setIsAddedJob(true)}>Добавить работу</Button>}
+        </div>
       </div>
+      {isClient && (
       <PDFViewer width="100%" height="100%" showToolbar={false}>
         <Resume data={state} />
       </PDFViewer>
+      )}
     </div>
   );
 };

@@ -5,11 +5,11 @@ import {
   Page, Text, View, Document, Image, StyleSheet, Font,
 } from '@react-pdf/renderer';
 import { Input } from '@/shared/Input';
+import { ResumeType } from '@/shared/Types/generalTypes';
 
 Font.register({
   family: 'Roboto',
-  src:
-        'https://cdnjs.cloudflare.com/ajax/libs/ink/3.1.10/fonts/Roboto/roboto-medium-webfont.ttf',
+  src: 'https://cdnjs.cloudflare.com/ajax/libs/ink/3.1.10/fonts/Roboto/roboto-medium-webfont.ttf',
 });
 
 // Create styles
@@ -20,6 +20,7 @@ const styles = StyleSheet.create({
   },
   body: {
     padding: 35,
+    width: '100%',
   },
   section: {
     maxHeight: 100,
@@ -49,21 +50,22 @@ const styles = StyleSheet.create({
     color: '#ffffff',
   },
   image: { width: 100, height: 100 },
-  leftCol: {
+  jobs: {
+    marginTop: 20,
+  },
 
+  job: {
+    marginBottom: 10,
+  },
+  jobHeader: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
 });
 
 type MainProps = {
-  data: {
-    name: string
-    lastName: string
-    mail: string
-    phone: string
-    image: string
-    job: string
-    about: string
-  }
+  data: ResumeType
 };
 
 export const Resume:React.FC<MainProps> = ({ data }) => (
@@ -94,9 +96,8 @@ export const Resume:React.FC<MainProps> = ({ data }) => (
           </View>
         </View>
       </View>
-      <View style={[styles.body, styles.flex]}>
-        <View style={styles.leftCol}>
-          {data.about
+      <View style={styles.body}>
+        {data.about
             && (
             <>
               <Text style={[styles.titleText, { color: 'black' }]}>О себе</Text>
@@ -105,14 +106,28 @@ export const Resume:React.FC<MainProps> = ({ data }) => (
               </Text>
             </>
             )}
-
+        <View style={styles.jobs}>
+          {data.jobs.map(({ titleJob, cityJob, descriptionJob }) => (
+            <View style={styles.job} key={Math.random()}>
+              <View style={styles.jobHeader}>
+                <Text style={[styles.subtitleText, { color: 'black' }]}>
+                  {titleJob}
+                </Text>
+                <Text style={[styles.subtitleText, { color: 'black' }]}>
+                  {cityJob}
+                </Text>
+              </View>
+              <Text style={[styles.subtitleText, { color: 'black' }]}>
+                {descriptionJob}
+              </Text>
+            </View>
+          ))}
         </View>
         <View>
           <Text style={styles.subtitleText}>
             {data.phone}
           </Text>
         </View>
-
       </View>
     </Page>
   </Document>
